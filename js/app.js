@@ -31,8 +31,20 @@ app.service("GroceryService",function(){
         {id:8, completed:true, itemName: 'tortillas', date: '2014-10-04'}
     ];    
 
+    groceryService.getNewID = function(){
+        if(groceryService.newID){
+            groceryService.newID++;
+        }
+        else
+        {
+            var maxID = _.max(groceryService.groceryItems, function(entry){ return entry.id} );      
+            groceryService.newID = maxID.id+1
+        }
+        return groceryService.newID;     
+    }
+
     groceryService.save = function(entry){
-        console.log("inside service save");
+        entry.id = groceryService.getNewID();
         groceryService.groceryItems.push(entry);
     }
 
@@ -45,10 +57,11 @@ app.controller("HomeController", ["$scope", function($scope) {
 
 app.controller("GroceryListItemsController",  ["$scope","$location", "GroceryService",  function($scope,$location,GroceryService){
     $scope.groceryItems = GroceryService.groceryItems;
-    console.log("inside controller save");
-    $scope.groceryItem = {id:7, completed:true, itemName:"Cheese",date: new Date()} ;
+    
+    $scope.groceryItem = {id:7, completed:true, itemName:"",date: new Date()} ;
     $scope.save = function(){
         GroceryService.save($scope.groceryItem);
         $location.path("/");
     }
+    console.log($scope.groceryItems);
 }]);
