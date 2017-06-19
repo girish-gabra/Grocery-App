@@ -110,3 +110,11 @@ app.controller("GroceryListItemController",  ["$scope","$routeParams","$location
     }
     //console.log($scope.groceryItems);
 }]);
+
+// creating custom directive
+app.directive("tbGroceryItem",function(){
+    return{
+        restrict: 'E',
+        templateUrl: 'Views/groceryItem.html'
+    }
+});
