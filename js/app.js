@@ -80,6 +80,10 @@ app.service("GroceryService",function(){
 
     };
 
+    groceryService.markCompleted = function(entry){
+        entry.completed = !entry.completed;
+    };
+
     return groceryService;
 });
 
@@ -90,6 +94,10 @@ app.controller("HomeController", ["$scope", "GroceryService", function($scope,Gr
 
      $scope.removeItem=function(entry){
         GroceryService.removeItem(entry);
+     }
+
+     $scope.markCompleted = function(entry){
+        GroceryService.markCompleted(entry);
      }
 }]);
 
