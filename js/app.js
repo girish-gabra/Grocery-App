@@ -22,19 +22,23 @@ app.config(function($routeProvider){
 })
 
 // add a service
-app.service("GroceryService",function(){
+app.service("GroceryService",function($http){
     var groceryService = []
-    groceryService.groceryItems = [
-        {id:1, completed:true, itemName: 'milk', date: new Date("October 1,2014 11:!3:00")},
-        {id:2, completed:true, itemName: 'cookies', date: new Date("October 1,2014 11:!3:00")},
-        {id:3, completed:true, itemName: 'ice cream', date: new Date("October 2,2014 11:!3:00")},
-        {id:4, completed:true, itemName: 'potatoes', date: new Date("October 2,2014 11:!3:00")},
-        {id:5, completed:true, itemName: 'cereal', date: new Date("October 2,2014 11:!3:00")},
-        {id:6, completed:true, itemName: 'bread', date: new Date("October 3,2014 11:!3:00")},
-        {id:7, completed:true, itemName: 'eggs', date: new Date("October 4,2014 11:!3:00")},
-        {id:8, completed:true, itemName: 'tortillas', date: new Date("October 4,2014 11:!3:00")}
-    ];    
-    console.log('inside groceryService');
+    groceryService.groceryItems = [];    
+    
+    $http.get("data/server_data.json")
+        .success(function(data){
+                groceryService.groceryItems = data;
+
+                for(var item in groceryService.groceryItems)
+                {
+                    groceryService.groceryItems.item.date = new Date(groceryService.groceryItems.item.date);
+                }
+        })
+        .error(function(data){
+                alert("Things went wrong");
+        })
+
     groceryService.findByID = function(id){
         for(var item in groceryService.groceryItems)
         {
@@ -88,7 +92,7 @@ app.service("GroceryService",function(){
 });
 
 app.controller("HomeController", ["$scope", "GroceryService", function($scope,GroceryService) {
-    $scope.appTitle = "Grocery list";
+    $scope.appTitle = "Grocery list of Items";
     //console.log('inside home controller');
      $scope.groceryItems = GroceryService.groceryItems;
 
@@ -99,6 +103,11 @@ app.controller("HomeController", ["$scope", "GroceryService", function($scope,Gr
      $scope.markCompleted = function(entry){
         GroceryService.markCompleted(entry);
      }
+
+     $scope.$watch( function(){ return GroceryService.groceryItems; }, function(groceryItems) {
+        $scope.groceryItems = groceryItems;
+    })
+
 }]);
 
 app.controller("GroceryListItemController",  ["$scope","$routeParams","$location", "GroceryService",  function($scope,$routeParams,$location,GroceryService){
