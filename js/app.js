@@ -29,10 +29,11 @@ app.service("GroceryService",function($http){
     $http.get("data/server_data.json")
         .success(function(data){
                 groceryService.groceryItems = data;
+                console.log("inside success");
 
                 for(var item in groceryService.groceryItems)
                 {
-                    groceryService.groceryItems.item.date = new Date(groceryService.groceryItems.item.date);
+                    groceryService.groceryItems[item].date = new Date(groceryService.groceryItems[item].date);
                 }
         })
         .error(function(data){
@@ -70,7 +71,15 @@ app.service("GroceryService",function($http){
            updatedItem.date = entry.date;     
         }
         else{
-            entry.id = groceryService.getNewID();    
+            $http.post("data/added_item.json")
+                .success(function(data){
+                    entry.id = data.newId;
+                })  
+                .error(function(data,status){
+
+                })
+
+            //entry.id = groceryService.getNewID();    handled at server side
             groceryService.groceryItems.push(entry);
         }
         
